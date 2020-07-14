@@ -1,0 +1,341 @@
+commit 4c915b63199d592b5406044d09a18016730498b1
+Author: Balasubramanian Kandasamy <balasubramanian.kandasamy@oracle.com>
+Date:   Thu Jun 25 15:04:44 2015 +0200
+
+    Update docker package names
+
+commit 3e27013e94f941f01981f4177ebe17ff704d2d35
+Author: Annamalai Gurusami <annamalai.gurusami@oracle.com>
+Date:   Mon Jun 22 12:47:37 2015 +0530
+
+    Bug #19138298 RECORD IN INDEX WAS NOT FOUND ON ROLLBACK, TRYING TO INSERT
+    
+    Post push fix.  The function cmp_dtuple_rec() was used without a prototype
+    in the file row0purge.c.  Adding the include file rem0cmp.h to row0purge.c
+    to resolve this issue.
+    
+    approved by Krunal over IM.
+
+commit 1d951cc64d0a782dcc4e1078ec747eb786405778
+Author: Ajo Robert <ajo.robert@oracle.com>
+Date:   Mon Jun 22 12:09:59 2015 +0530
+
+    Bug #18075170 SQL NODE RESTART REQUIRED TO
+        AVOID DEADLOCK AFTER RESTORE
+    
+        Post push test fix.
+
+commit 72c6f6c896ff7c307b220df8310b2e22de862692
+Author: Annamalai Gurusami <annamalai.gurusami@oracle.com>
+Date:   Fri Jun 19 10:17:36 2015 +0530
+
+    Bug #20762798 FK DDL: CRASH IN DICT_FOREIGN_REMOVE_FROM_CACHE
+    
+    Problem:
+    
+    If we add a referential integrity constraint with a duplicate
+    name, an error occurs.  The foreign key object would not have
+    been added to the dictionary cache.  In the error path, there
+    is an attempt to remove this foreign key object. Since this
+    object is not there, the search returns a NULL result.
+    De-referencing the null object results in this crash.
+    
+    Solution:
+    
+    If the search to the foreign key object failed, then don't
+    attempt to access it.
+    
+    rb#9309 approved by Marko.
+
+commit 568cc4996f19330fb9c0a9304d92c883f1b5b316
+Author: V S Murthy Sidagam <venkata.sidagam@oracle.com>
+Date:   Fri Jun 19 08:26:33 2015 +0530
+
+    Bug #21221862 NEWEST RHEL/CENTOS OPENSSL UPDATE BREAKS MYSQL DHE CIPHERS
+    
+    Description: The newest RHEL/CentOS/SL 6.6 openssl package
+    (1.0.1e-30.el6_6.9; published around 6/4/2015) contains a fix for
+    LogJam. RedHat's fix for this was to limit the use
+    of any SSL DH key sizes to a minimum of 768 bits. This breaks any
+    DHE SSL ciphers for MySQL clients as soon as you install the
+    openssl update, since in vio/viosslfactories.c, the default
+    DHPARAM is a 512 bit one. This cannot be changed in
+    configuration/runtime; and needs a recompile. Because of this the
+    client connection with --ssl-cipher=DHE-RSA-AES256-SHA is not
+    able to connect the server.
+    
+    Analysis: Openssl has changed Diffie-Hellman key from the 512 to
+    1024 due to some reasons(please see the details at
+    http://openssl.org/news/secadv_20150611.txt) Because of this the client
+    with DHE cipher is failing to connect the server. This change took
+    place from the openssl-1.0.1n onwards.
+    
+    Fix: Similar bug fix is already pushed to mysql-5.7 under bug#18367167.
+    Hence we backported the same fix to mysql-5.5 and mysql-5.6.
+
+commit 6a005561b3a38f5248fe51c0ceb270829c54d746
+Author: Tor Didriksen <tor.didriksen@oracle.com>
+Date:   Wed Jun 17 13:44:32 2015 +0200
+
+    Bug#19660891 HANDLE_FATAL_SIGNAL (SIG=11) IN QUEUE_INSERT
+    
+    Backport from 5.6 to 5.5
+    This makes filesort robust to misc variants of order by / group by
+    on columns/expressions with zero length.
+
+commit ece46953410341d037fb5aa243dc87fbb34bc2f4
+Author: Balasubramanian Kandasamy <balasubramanian.kandasamy@oracle.com>
+Date:   Wed Jun 17 11:04:13 2015 +0200
+
+    Bug#21262883 - MYSQL-SYSTEMD-START SCRIPT ERROR WHEN USING OPTION DATADIR OR SIMILAR
+    
+    Fixed the syntax in mysql-systemd-start script
+
+commit cd6dea220864b1eb8fd52928b6b57c4694e306c9
+Author: Balasubramanian Kandasamy <balasubramanian.kandasamy@oracle.com>
+Date:   Tue Jun 16 13:56:28 2015 +0200
+
+    Updated CMakeLists.txt to include rpm-docker directory
+
+commit accb87c3c3143178302cb7160603902de6d28c7f
+Author: Balasubramanian Kandasamy <balasubramanian.kandasamy@oracle.com>
+Date:   Tue Jun 16 12:08:42 2015 +0200
+
+    Add packaging scripts for docker builds
+
+commit 92329be8ac8451a3ec1000502794cb87e8573560
+Merge: f44f1cd ec9c911
+Author: Arun Kuruvila <arun.kuruvila@oracle.com>
+Date:   Fri Jun 5 10:45:29 2015 +0530
+
+    Merge branch 'mysql-5.1' into mysql-5.5
+
+commit ec9c9114fb8acffd13b400b7af181d76f7d53d34
+Author: Arun Kuruvila <arun.kuruvila@oracle.com>
+Date:   Fri Jun 5 10:44:33 2015 +0530
+
+    Bug #20605441 : BUFFER OVERFLOW IN MYSQLSLAP
+    
+    Post push to fix pb2 test case failure.
+
+commit f44f1cdbd711fd6500bc868bdd8a2b74fe371b64
+Merge: dce5402 8e4fdf9
+Author: Arun Kuruvila <arun.kuruvila@oracle.com>
+Date:   Thu Jun 4 11:54:54 2015 +0530
+
+    Merge branch 'mysql-5.1' into mysql-5.5
+
+commit 8e4fdf97c9055f70aa5cd699ec940d884f67accc
+Author: Arun Kuruvila <arun.kuruvila@oracle.com>
+Date:   Thu Jun 4 11:53:17 2015 +0530
+
+    Bug #20605441 : BUFFER OVERFLOW IN MYSQLSLAP
+    
+    Description:- mysqlslap is a diagnostic utility designed to
+    emulate client load for a MySQL server and to report the
+    timing of each stage. This utility crashes when invalid
+    values are passed to the options 'num_int_cols_opt' or
+    'num_chars_cols_opt' or 'engine'.
+    
+    Analysis:- mysqlslap uses "parse_option()" to parse the
+    values specified to the options 'num_int_cols_opt',
+    'num_chars_cols_opt' and 'engine'. These options takes
+    values separated by commas. In "parse_option()", the comma
+    separated values are separated and copied into a buffer
+    without checking the length of the string to be copied. The
+    size of the buffer is defined by a macro HUGE_STRING_LENGTH
+    whose value is 8196. So if the length of the any of the
+    comma separated value exceeds HUGE_STRING_LENGTH, will
+    result in a buffer overflow.
+    
+    Fix:- A check is introduced in "parse_option()" to check
+    whether the size of the string to be copied is more than
+    HUGE_STRING_LENGTH. If it is more, an error, "Invalid value
+    specified for the option 'xxx'" is thrown.
+    Option length was incorrectly calculated for the last comma
+    separated value. So fixed that as well.
+
+commit dce54025a62211cc592a9132d22ed0ff2df59e28
+Author: Debarun Banerjee <debarun.banerjee@oracle.com>
+Date:   Wed Jun 3 11:43:12 2015 +0530
+
+    BUG#21065746 RQG_PARTN_PRUNING_VALGRIND FAILED IN REM0REC.CC
+    
+    Problem :
+    ---------
+    This is a regression of Bug#19138298. In purge_node_t::validate_pcur
+    we are trying to get offsets for all columns of clustered index from
+    stored record in persistent cursor. This would fail when stored record
+    is not having all fields of the index. The stored record stores only
+    fields that are needed to uniquely identify the entry.
+    
+    Solution :
+    ----------
+    1. Use pcur.old_n_fields to get fields that are stored
+    2. Add comment to note dependency between stored fields in purge node
+    ref and stored cursor.
+    3. Return if the cursor record is not already stored as it is not safe
+    to access cursor record directly without latch.
+    
+    Reviewed-by: Marko Makela <marko.makela@oracle.com>
+    
+    RB: 9139
+
+commit 148fa69fa3f20e57c40ee4e2c295a938eadadf36
+Author: Debarun Banerjee <debarun.banerjee@oracle.com>
+Date:   Wed Jun 3 11:27:38 2015 +0530
+
+    BUG#21126772 VALGRIND FAILURE IN ENGINES/FUNCS SUITE
+    
+    Problem :
+    ---------
+    This is a regression of bug-19138298. During purge, if
+    btr_pcur_restore_position fails, we set found_clust to FALSE
+    so that it can find a possible clustered index record in future
+    calls for the same undo entry. This, however, overwrites the
+    old_rec_buf while initializing pcur again in next call.
+    
+    The leak is reproducible in local environment and with the
+    test provided along with bug-19138298.
+    
+    Solution :
+    ----------
+    If btr_pcur_restore_position() fails close the cursor.
+    
+    Reviewed-by: Marko Makela <Marko.Makela@oracle.com>
+    Reviewed-by: Annamalai Gurusami <Annamalai.Gurusami@oracle.com>
+    
+    RB: 9074
+
+commit ec1c91173df70f88a53b04cfd2ad08056ecd23e5
+Merge: a0984e4 4654f1f
+Author: Bjorn Munch <bjorn.munch@oracle.com>
+Date:   Fri May 29 09:32:32 2015 +0200
+
+    Empty version change upmerge
+
+commit 4654f1f13004ce9db010c28994999d81564a29b5
+Author: Bjorn Munch <bjorn.munch@oracle.com>
+Date:   Fri May 29 09:28:53 2015 +0200
+
+    Raise version number after tagging 5.1.75
+
+commit a0984e474f9f977eab5387f3d29f5132c879972b
+Author: susan.koerner@oracle.com <>
+Date:   Tue Jun 10 10:57:30 2014 -0600
+
+    20140609 - skoerner - changed innodb-thread-concurrency from 1000 to 50 to support the server release testing for 5.5, 5.6, and 5.7.
+    
+    (cherry picked from commit ff9206e6fe856d96eb7faccf53a94e4495bd4e3f)
+
+commit b44a99d750a426ad295c73927e7f67ca49466715
+Author: Bin Su <bin.x.su@oracle.com>
+Date:   Thu May 21 11:52:17 2015 +0800
+
+    Bug#21113036 - MYSQL/INNODB MIX BUFFERED AND DIRECT IO
+    
+    As man page of open(2) suggested, we should open the same file in the same
+    mode, to have better performance. For some data files, we will first call
+    os_file_create_simple_no_error_handling_func() to open them, and then call
+    os_file_create_func() again. We have to make sure if DIRECT IO is specified,
+    these two functions should both open file with O_DIRECT.
+    
+    Reviewed-by: Sunny Bains <sunny.bains@oracle.com>
+    RB: 8981
+
+commit ca1f80e778d81e9c5a5215416c9deef448947bd6
+Author: Tatiana Azundris Nuernberg <tatjana.nuernberg@oracle.com>
+Date:   Mon May 18 08:09:02 2015 +0100
+
+    Bug#20642505: HENRY SPENCER REGULAR EXPRESSIONS (REGEX) LIBRARY
+    
+    The MySQL server uses Henry Spencer's library for regular
+    expressions to support the REGEXP/RLIKE string operator.
+    This changeset adapts a recent fix from the upstream for
+    better 32-bit compatiblity. (Note that we cannot simply use
+    the current upstream version as a drop-in replacement
+    for the version used by the server as the latter has
+    been extended to understand MySQL charsets etc.)
+
+commit 49c3c543e755dc963d277fc9ccbde9d9a805807e
+Author: Ajo Robert <ajo.robert@oracle.com>
+Date:   Tue May 12 20:27:26 2015 +0530
+
+    Bug #18075170 SQL NODE RESTART REQUIRED TO
+    AVOID DEADLOCK AFTER RESTORE
+    
+    Test Failure Fix.
+
+commit 84c2a226bb297183e7e513923de600c30f11296d
+Author: Ajo Robert <ajo.robert@oracle.com>
+Date:   Mon May 11 16:05:50 2015 +0530
+
+    Bug #18075170 SQL NODE RESTART REQUIRED TO
+    AVOID DEADLOCK AFTER RESTORE
+    
+    Analysis
+    --------
+    Accessing the restored NDB table in an active multi-statement
+    transaction was resulting in deadlock found error.
+    
+    MySQL Server needs to discover metadata of NDB table from
+    data nodes after table is restored from backup. Metadata
+    discovery happens on the first access to restored table.
+    Current code mandates this statement to be the first one
+    in the transaction. This is because discover needs exclusive
+    metadata lock on the table. Lock upgrade at this point can
+    lead to MDL deadlock and the code was written at the time
+    when MDL deadlock detector was not present. In case when
+    discovery attempted in the statement other than the first
+    one in transaction ER_LOCK_DEADLOCK error is reported
+    pessimistically.
+    
+    Fix:
+    ---
+    Removed the constraint as any potential deadlock will be
+    handled by deadlock detector. Also changed code in discover
+    to keep metadata locks of active transaction.
+    
+    Same issue was present in table auto repair scenario. Same
+    fix is added in repair path also.
+
+commit 7af2bc729cd22bcbc2dc133d33dcbafdf1717658
+Author: Annamalai Gurusami <annamalai.gurusami@oracle.com>
+Date:   Sat May 9 13:24:01 2015 +0530
+
+    Bug #19138298 RECORD IN INDEX WAS NOT FOUND ON ROLLBACK, TRYING TO INSERT
+    
+    Scenario:
+    
+    1. The purge thread takes an undo log record and parses it and forms
+       the record to be purged. We have the primary and secondary keys
+       to locate the actual records.
+    2. Using the secondary index key, we search in the secondary index.
+       One record is found.
+    3. Then it is checked if this record can be purged.  The answer is we
+       can purge this record.  To determine this we look up the clustered
+       index record.  Either there is no corresponding clustered index
+       record, or the matching clustered index record is delete marked.
+    4. Then we check whether the secondary index record is delete marked.
+       We find that it is not delete marked.  We report warning in optimized
+       build and assert in debug build.
+    
+    Problem:
+    
+    In step 3, we report that the record is purgeable even though it is
+    not delete marked.  This is because of inconsistency between the
+    following members of purge_node_t structure - found_clust, ref and pcur.
+    
+    Solution:
+    
+    In the row_purge_reposition_pcur(), if the persistent cursor restore
+    fails, then reset the purge_node_t->found_clust member.  This will
+    keep the members of purge_node_t structure in a consistent state.
+    
+    rb#8813 approved by Marko.
+
+commit 5cda3bf66e4939fcea894e3700e46025cc0c187d
+Author: Balasubramanian Kandasamy <balasubramanian.kandasamy@oracle.com>
+Date:   Mon May 4 12:06:52 2015 +0200
+
+    Raise version number after cloning 5.5.44
